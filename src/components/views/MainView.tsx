@@ -347,7 +347,7 @@ export function MainView() {
                   className="h-8 w-44 pl-8 text-sm transition-all"
                 />
               </div>
-              {taskMode === "progress" && hasActions && (
+              {hasActions && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button size="sm" variant="ghost" className="size-8 p-0">
