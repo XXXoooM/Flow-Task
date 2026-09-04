@@ -5,6 +5,7 @@ import { NAV_ITEMS, SIDEBAR_WIDTH, SIDEBAR_WIDTH_COLLAPSED } from "@/lib/constan
 import { useUiStore } from "@/stores/uiStore";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { SettingsPopover } from "@/components/layout/SettingsPopover";
+import { TodaySummaryCard } from "@/components/layout/TodaySummaryCard";
 import { cn } from "@/lib/utils";
 
 export function Sidebar() {
@@ -26,6 +27,9 @@ export function Sidebar() {
           <Plus className="size-4" strokeWidth={2} />
         </SidebarButton>
       </div>
+
+      {/* 今日概览聚合卡片 */}
+      <TodaySummaryCard collapsed={collapsed} />
 
       {/* 导航 */}
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-2 ft-scroll">

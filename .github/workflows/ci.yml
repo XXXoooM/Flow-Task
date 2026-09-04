@@ -35,6 +35,9 @@ jobs:
       - name: 前端类型检查 + 构建
         run: npm run build
 
+      - name: 单元测试
+        run: npm test
+
       - name: Rust fmt 检查
         working-directory: src-tauri
         run: cargo fmt --all -- --check

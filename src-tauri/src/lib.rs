@@ -1,9 +1,7 @@
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
 use tauri::tray::TrayIconBuilder;
 use tauri::{AppHandle, Emitter, Manager};
-use tauri_plugin_global_shortcut::{
-    Builder as ShortcutBuilder, GlobalShortcutExt, ShortcutState,
-};
+use tauri_plugin_global_shortcut::{Builder as ShortcutBuilder, GlobalShortcutExt, ShortcutState};
 use tauri_plugin_sql::{Builder as SqlBuilder, Migration, MigrationKind};
 
 fn migrations() -> Vec<Migration> {
@@ -61,9 +59,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![set_tray_title])
         .setup(|app| {
             // 全局快捷键：Ctrl+Shift+T 唤起窗口并触发快速新建。
-            app.global_shortcut().on_shortcut(
-                "ctrl+shift+t",
-                |app, _shortcut, event| {
+            app.global_shortcut()
+                .on_shortcut("ctrl+shift+t", |app, _shortcut, event| {
                     if event.state() == ShortcutState::Pressed {
                         let _ = app.emit("shortcuts://quick-add", ());
                         if let Some(w) = app.get_webview_window("main") {
@@ -72,8 +69,7 @@ pub fn run() {
                             let _ = w.set_focus();
                         }
                     }
-                },
-            )?;
+                })?;
 
             // 系统托盘 + 右键菜单。
             let toggle = MenuItem::with_id(app, "toggle", "显示 / 隐藏", true, None::<&str>)?;
