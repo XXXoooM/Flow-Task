@@ -1,6 +1,5 @@
-import type { ReactNode } from "react";
 import { motion } from "framer-motion";
-import { Plus, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { NAV_ITEMS, SIDEBAR_WIDTH, SIDEBAR_WIDTH_COLLAPSED } from "@/lib/constants";
 import { useUiStore } from "@/stores/uiStore";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -21,15 +20,10 @@ export function Sidebar() {
       transition={{ type: "spring", stiffness: 320, damping: 32 }}
       className="flex h-full shrink-0 flex-col border-r border-border bg-sidebar text-sidebar-foreground"
     >
-      {/* 快速新建 */}
-      <div className={cn("p-3", collapsed && "flex justify-center px-2")}>
-        <SidebarButton collapsed={collapsed} full label="新建任务" hint="Ctrl + Shift + N">
-          <Plus className="size-4" strokeWidth={2} />
-        </SidebarButton>
-      </div>
-
       {/* 今日概览聚合卡片 */}
-      <TodaySummaryCard collapsed={collapsed} />
+      <div className="pt-3">
+        <TodaySummaryCard collapsed={collapsed} />
+      </div>
 
       {/* 导航 */}
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-2 ft-scroll">
@@ -99,50 +93,4 @@ export function Sidebar() {
       </div>
     </motion.aside>
   );
-}
-
-function SidebarButton({
-  collapsed,
-  children,
-  label,
-  hint,
-  full,
-  ghost,
-}: {
-  collapsed: boolean;
-  children: ReactNode;
-  label: string;
-  hint?: string;
-  full?: boolean;
-  ghost?: boolean;
-}) {
-  const base = cn(
-    "flex items-center gap-2 rounded-lg text-sm font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-sidebar-ring/50",
-    full
-      ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
-      : ghost
-        ? "text-text-secondary hover:bg-bg-hover hover:text-text-primary"
-        : "",
-    collapsed ? "size-9 justify-center" : "h-9 w-full px-3"
-  );
-
-  const el = (
-    <button type="button" className={base}>
-      {children}
-      {!collapsed && <span className="truncate">{label}</span>}
-    </button>
-  );
-
-  if (collapsed) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>{el}</TooltipTrigger>
-        <TooltipContent side="right">
-          <div>{label}</div>
-          {hint && <div className="text-[11px] opacity-70">{hint}</div>}
-        </TooltipContent>
-      </Tooltip>
-    );
-  }
-  return el;
 }
