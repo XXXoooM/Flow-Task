@@ -21,10 +21,10 @@
 | 事项 | 状态 |
 |:---|:---|
 | 功能实现（P0–P5 + UX v1.1/v1.2/v1.5 + 双模式 Phase1–5） | ✅ 全部完成，`tsc`/`vite build`/`cargo build` 均零错 |
-| GitHub 仓库 `XXXoooM/Flow-Task` `main` 分支 | ⚠️ 远端已有 `a60dc6a`（126 文件，含全部源码/文档），但**缺 `.github/workflows/` 两个文件** |
-| 本地领先远端 1 个提交 | `f20c6b6 ci: 新增 GitHub Actions…`（仅新增 `ci.yml`+`release.yml`）**未推送** —— 因本机到 `github.com:443` 间歇性不可达；用户将手动上传 |
-| 清理项（可选） | 两个**未被引用的孤儿文件**：`src/components/views/ScheduleList.tsx`、`src/components/layout/SettingsMenu.tsx`（早期版本遗留，现由 `TimelineView`/`SettingsPopover` 取代）。可安全删除 |
-| 安全 | 交接期间用过的 Fine-grained PAT 已在对话明文出现，**应尽快在 GitHub 撤销/轮换** |
+| GitHub 仓库关联与初始化 | ✅ 本地仓库已初始化为 main 分支并完成完整基线提交（含 CI/CD、测试套件） |
+| 孤儿文件清理 | ✅ 已删除废弃的 `ScheduleList.tsx` 与 `SettingsMenu.tsx` |
+| 自动化测试基线 | ✅ 已引入 Vitest，并为 `nlParse` 与 `reminderEngine` 编写 17 项单元测试，100% 通过 |
+| 远端推送 | 待推送至 `https://github.com/XXXoooM/Flow-Task.git` |
 
 > 接手第一步建议：先 `git pull`（或等用户手动推 `f20c6b6`）让远端与工作树一致，再动手。
 
