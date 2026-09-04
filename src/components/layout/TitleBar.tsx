@@ -55,12 +55,12 @@ export function TitleBar() {
     >
       {/* 品牌区（整块可拖拽） */}
       <div data-tauri-drag-region className="flex items-center gap-2">
-        <div
+        <img
+          src="/logo.svg"
+          alt="FlowTask"
           data-tauri-drag-region
-          className="grid size-5 place-items-center rounded-md bg-primary text-[10px] font-bold text-primary-foreground"
-        >
-          F
-        </div>
+          className="size-4.5 rounded-md shrink-0 pointer-events-none"
+        />
         <span
           data-tauri-drag-region
           className="text-xs font-medium tracking-wide text-text-secondary"
