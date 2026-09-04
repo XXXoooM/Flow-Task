@@ -1,0 +1,329 @@
+@import "tailwindcss";
+
+/* Enable class-based dark mode (toggled on <html class="dark"> by useTheme). */
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * =============================================================
+ *  FlowTask Design System
+ *  - :root / .dark      : theme-aware semantic tokens (shadcn-compatible)
+ *  - @theme inline      : map semantic vars -> Tailwind color utilities
+ *  - @theme             : plan's raw app tokens, radii, shadows, fonts
+ * =============================================================
+ */
+
+:root {
+  /* ---- App palette (light) ---- */
+  --bg-app: #fafafa;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f4f4f5;
+  --bg-hover: #f0f0f2;
+
+  --text-primary: #18181b;
+  --text-secondary: #71717a;
+  --text-tertiary: #a1a1aa;
+
+  /* ---- shadcn semantic (light) ---- */
+  --background: #fafafa;
+  --foreground: #18181b;
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  --popover: #ffffff;
+  --popover-foreground: #18181b;
+  --primary: #6366f1; /* Indigo-500 = FlowTask accent */
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #eef2ff; /* subtle indigo hover surface */
+  --accent-foreground: #4f46e5;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #6366f1;
+
+  --sidebar: #f4f4f5;
+  --sidebar-foreground: #18181b;
+  --sidebar-primary: #6366f1;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eef2ff;
+  --sidebar-accent-foreground: #4f46e5;
+  --sidebar-border: #e4e4e7;
+  --sidebar-ring: #6366f1;
+
+  --chart-1: #6366f1;
+  --chart-2: #22c55e;
+  --chart-3: #f59e0b;
+  --chart-4: #ef4444;
+  --chart-5: #8b5cf6;
+
+  --radius: 10px;
+}
+
+.dark {
+  /* ---- App palette (dark) ---- */
+  --bg-app: #09090b;
+  --bg-surface: #1e1e22;
+  --bg-elevated: #27272a;
+  --bg-hover: #2e2e33;
+
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #52525b;
+
+  /* ---- shadcn semantic (dark) ---- */
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #1e1e22;
+  --card-foreground: #fafafa;
+  --popover: #1e1e22;
+  --popover-foreground: #fafafa;
+  --primary: #818cf8; /* Indigo-400 */
+  --primary-foreground: #0b1020;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #1e1b4b;
+  --accent-foreground: #c7d2fe;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: #818cf8;
+
+  --sidebar: #131316;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #818cf8;
+  --sidebar-primary-foreground: #0b1020;
+  --sidebar-accent: #1e1b4b;
+  --sidebar-accent-foreground: #c7d2fe;
+  --sidebar-border: #27272a;
+  --sidebar-ring: #818cf8;
+}
+
+/* Map theme-aware vars to color utilities (inline => follows .dark cascade). */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Plan's app palette, theme-aware (references the live --bg-*/--text-* vars). */
+  --color-bg-app: var(--bg-app);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-hover: var(--bg-hover);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+}
+
+/*
+ * Plan's raw app tokens + radii/shadows/fonts.
+ * Exposed verbatim so later-phase components (which reference
+ * bg-bg-surface, text-text-secondary, dark:bg-dark-bg-surface, etc.) compile.
+ * NOTE: the plan's `accent` brand color is surfaced as `brand` here to avoid
+ * colliding with shadcn's subtle `accent` hover surface.
+ */
+@theme {
+  --color-brand: #6366f1;
+  --color-brand-hover: #4f46e5;
+  --color-brand-muted: #eef2ff;
+  --color-dark-brand: #818cf8;
+
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+    user-select: none;
+  }
+  /* Smooth theme switch */
+  html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Thin, theme-aware scrollbars for content panes. */
+@layer utilities {
+  .ft-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .ft-scroll::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .ft-scroll::-webkit-scrollbar-thumb {
+    background-color: var(--border);
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  .ft-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: var(--muted-foreground);
+    background-clip: content-box;
+  }
+}
+
+/* ===== FullCalendar theme (FlowTask) =====
+   All values reference the semantic CSS vars above, so light/dark adapt automatically. */
+.fc {
+  --fc-border-color: var(--border);
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: var(--muted);
+  --fc-today-bg-color: var(--accent);
+  --fc-now-indicator-color: var(--primary);
+  --fc-event-border-color: transparent;
+  --fc-small-font-size: 0.78rem;
+  --fc-list-event-hover-bg-color: var(--accent);
+
+  --fc-button-text-color: var(--primary-foreground);
+  --fc-button-bg-color: var(--primary);
+  --fc-button-border-color: transparent;
+  --fc-button-hover-bg-color: color-mix(in oklab, var(--primary) 86%, black);
+  --fc-button-hover-border-color: transparent;
+  --fc-button-active-bg-color: color-mix(in oklab, var(--primary) 78%, black);
+  --fc-button-active-border-color: transparent;
+  --fc-focus-ring: 0 0 0 3px color-mix(in oklab, var(--ring) 45%, transparent);
+}
+
+.fc .fc-toolbar { margin-bottom: 0.75rem; }
+.fc .fc-toolbar-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.fc .fc-button {
+  font-size: 0.8rem;
+  border-radius: var(--radius-md);
+  box-shadow: none;
+  text-transform: none;
+  padding: 0.3rem 0.7rem;
+}
+.fc .fc-daygrid-day-number,
+.fc .fc-col-header-cell-cushion {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+}
+.fc .fc-col-header-cell-cushion { padding: 6px 4px; }
+.fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+  color: var(--primary);
+  font-weight: 700;
+}
+.fc .fc-event {
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  padding: 1px 4px;
+  cursor: pointer;
+}
+.fc .fc-event.ft-event-done { opacity: 0.5; text-decoration: line-through; }
+.fc .fc-daygrid-day-frame { min-height: 5.5rem; }
+.fc .fc-scrollgrid,
+.fc table { border-radius: var(--radius-lg); overflow: hidden; }
+.fc .fc-highlight { background: var(--accent); opacity: 1; }
+
+/* ===== Markdown rendering (task notes) ===== */
+.ft-md > *:first-child { margin-top: 0; }
+.ft-md > *:last-child { margin-bottom: 0; }
+.ft-md h1,
+.ft-md h2,
+.ft-md h3 { font-weight: 600; line-height: 1.3; margin: 0.8em 0 0.4em; }
+.ft-md h1 { font-size: 1.3em; }
+.ft-md h2 { font-size: 1.15em; }
+.ft-md h3 { font-size: 1.05em; }
+.ft-md p { margin: 0.5em 0; }
+.ft-md ul,
+.ft-md ol { margin: 0.5em 0; padding-left: 1.4em; }
+.ft-md li { margin: 0.15em 0; }
+.ft-md a { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
+.ft-md blockquote {
+  margin: 0.6em 0;
+  padding: 0.2em 0.9em;
+  border-left: 3px solid var(--border);
+  color: var(--text-secondary);
+}
+.ft-md code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--bg-elevated);
+}
+.ft-md pre {
+  margin: 0.7em 0;
+  padding: 0.75em 0.9em;
+  border-radius: 8px;
+  overflow-x: auto;
+  background: var(--bg-elevated);
+}
+.ft-md pre code { padding: 0; background: transparent; }
+.ft-md table { width: 100%; border-collapse: collapse; margin: 0.7em 0; font-size: 0.9em; }
+.ft-md th,
+.ft-md td { border: 1px solid var(--border); padding: 0.4em 0.6em; text-align: left; }
+.ft-md th { background: var(--bg-elevated); font-weight: 600; }
+.ft-md hr { border: 0; border-top: 1px solid var(--border); margin: 1em 0; }
+.ft-md img { max-width: 100%; border-radius: 8px; }

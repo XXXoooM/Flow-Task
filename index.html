@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlowTask</title>
+    <script>
+      // Pre-paint theme: read the persisted preference so the window never flashes.
+      (function () {
+        try {
+          var raw = localStorage.getItem("flowtask-ui");
+          var theme = raw ? (JSON.parse(raw).state || {}).theme : "system";
+          var dark =
+            theme === "dark" ||
+            ((theme === "system" || !theme) &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          var root = document.documentElement;
+          root.classList.toggle("dark", dark);
+          root.style.colorScheme = dark ? "dark" : "light";
+          root.style.backgroundColor = dark ? "#09090B" : "#FAFAFA";
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

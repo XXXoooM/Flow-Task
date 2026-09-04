@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "FlowTask",
+  "version": "1.0.0",
+  "identifier": "com.flowtask.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "FlowTask",
+        "width": 1080,
+        "height": 720,
+        "minWidth": 800,
+        "minHeight": 600,
+        "center": true,
+        "resizable": true,
+        "decorations": false,
+        "transparent": false,
+        "shadow": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Productivity",
+    "publisher": "FlowTask",
+    "copyright": "© 2026 FlowTask",
+    "shortDescription": "本地优先的个人任务管理桌面应用",
+    "longDescription": "FlowTask 是一款本地优先、纯离线的个人任务管理桌面应用：任务与子任务、优先级、标签、日历 / 看板视图、番茄钟专注统计、系统托盘与全局快捷键。",
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": ["SimpChinese", "English"]
+      }
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}
