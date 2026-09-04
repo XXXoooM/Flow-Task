@@ -30,31 +30,63 @@ export function notify(title: string, body?: string) {
   }
 }
 
-/** 完成提示音（WebAudio 合成，无需资源文件）。 */
-export function playChime() {
+let sharedAudioCtx: AudioContext | null = null;
+
+function getAudioContext(): AudioContext | null {
   try {
     const w = window as unknown as {
       AudioContext?: typeof AudioContext;
       webkitAudioContext?: typeof AudioContext;
     };
     const Ctor = w.AudioContext ?? w.webkitAudioContext;
-    if (!Ctor) return;
-    const ctx = new Ctor();
-    [880, 1174].forEach((freq, i) => {
+    if (!Ctor) return null;
+    if (!sharedAudioCtx || sharedAudioCtx.state === "closed") {
+      sharedAudioCtx = new Ctor();
+    }
+    if (sharedAudioCtx.state === "suspended") {
+      void sharedAudioCtx.resume();
+    }
+    return sharedAudioCtx;
+  } catch {
+    return null;
+  }
+}
+
+/** 完成提示音（WebAudio 合成音效，清脆和弦）。 */
+export function playChime() {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    if (ctx.state === "suspended") {
+      ctx.resume().then(() => playChime()).catch(() => undefined);
+      return;
+    }
+
+    // 优雅双音和弦 (C6 -> E6: 1046.5Hz, 1318.5Hz)
+    const tones = [
+      { freq: 1046.5, delay: 0 },
+      { freq: 1318.5, delay: 0.12 },
+    ];
+
+    const now = ctx.currentTime;
+    for (const { freq, delay } of tones) {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
+
       osc.type = "sine";
-      osc.frequency.value = freq;
+      osc.frequency.setValueAtTime(freq, now + delay);
+
+      gain.gain.setValueAtTime(0.0001, now + delay);
+      gain.gain.linearRampToValueAtTime(0.25, now + delay + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + 0.35);
+
       osc.connect(gain);
       gain.connect(ctx.destination);
-      const t = ctx.currentTime + i * 0.15;
-      gain.gain.setValueAtTime(0.0001, t);
-      gain.gain.exponentialRampToValueAtTime(0.2, t + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
-      osc.start(t);
-      osc.stop(t + 0.32);
-    });
-    window.setTimeout(() => ctx.close().catch(() => undefined), 1000);
+
+      osc.start(now + delay);
+      osc.stop(now + delay + 0.4);
+    }
   } catch {
     /* ignore */
   }

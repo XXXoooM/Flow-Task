@@ -15,6 +15,7 @@ import {
   Bell,
   Rocket,
   Eye,
+  Volume2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -31,7 +32,7 @@ import { useFocusSettings } from "@/stores/focusStore";
 import { useTaskStore } from "@/stores/taskStore";
 import { useUiStore } from "@/stores/uiStore";
 import { useNotifStore } from "@/stores/notificationStore";
-import { ensureNotifyPermission, notify } from "@/lib/notify";
+import { ensureNotifyPermission, notify, playChime } from "@/lib/notify";
 import { exportJson, exportCsv, importJsonText } from "@/lib/dataIo";
 import { APP_VERSION } from "@/lib/constants";
 import { REMINDER_OFFSETS, reminderOffsetLabel } from "@/types/task";
@@ -211,6 +212,26 @@ export function SettingsView() {
               />
             </button>
           </label>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs text-text-secondary">提示音效</span>
+            <button
+              type="button"
+              onClick={() =>
+                setSettings({ sound: !settings.sound })
+              }
+              className={cn(
+                "h-9 w-14 rounded-full p-1 transition-colors",
+                settings.sound ? "bg-primary" : "bg-input"
+              )}
+            >
+              <span
+                className={cn(
+                  "block h-7 w-7 rounded-full bg-white transition-transform",
+                  settings.sound && "translate-x-5"
+                )}
+              />
+            </button>
+          </label>
         </div>
       </Section>
 
@@ -222,6 +243,16 @@ export function SettingsView() {
           </Button>
           <Button variant="outline" onClick={testNotify} className="gap-2">
             <Bell className="size-4" /> 测试系统通知
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              playChime();
+              toast("🔔 提示音已播放");
+            }}
+            className="gap-2"
+          >
+            <Volume2 className="size-4" /> 测试提示音
           </Button>
         </div>
         <ReminderEngineSettings />
@@ -343,6 +374,14 @@ function ReminderEngineSettings() {
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-text-primary">提醒播放声音</span>
+        <Switch
+          checked={n.soundEnabled}
+          onCheckedChange={(v) => n.setPrefs({ soundEnabled: v })}
+        />
       </div>
 
       <div className="flex items-center justify-between">

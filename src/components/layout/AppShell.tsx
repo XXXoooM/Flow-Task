@@ -8,6 +8,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { StatusBar } from "@/components/layout/StatusBar";
 import { MainView } from "@/components/views/MainView";
 import { ReminderScheduler } from "@/components/layout/ReminderScheduler";
+import { PomodoroScheduler } from "@/components/layout/PomodoroScheduler";
 import { CommandPalette } from "@/components/layout/CommandPalette";
 import { ShortcutHelp } from "@/components/layout/ShortcutHelp";
 import { ensureNotifyPermission } from "@/lib/notify";
@@ -110,6 +111,7 @@ export function AppShell() {
       </div>
       <Toaster position="bottom-right" richColors closeButton />
       <ReminderScheduler />
+      <PomodoroScheduler />
       <CommandPalette />
       <ShortcutHelp open={helpOpen} onOpenChange={setHelpOpen} />
     </TooltipProvider>
