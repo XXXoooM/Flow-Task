@@ -125,7 +125,13 @@ function Slot({ index }: { index: number }) {
   );
 }
 
-export function TimelineView({ tasks }: { tasks: Task[] }) {
+export function TimelineView({
+  tasks,
+  query = "",
+}: {
+  tasks: Task[];
+  query?: string;
+}) {
   const patchTask = useTaskStore((s) => s.patchTask);
   const [day, setDay] = useState<Date>(() => new Date());
   const [now, setNow] = useState(() => new Date());
@@ -144,13 +150,19 @@ export function TimelineView({ tasks }: { tasks: Task[] }) {
   const dayStr = format(day, "yyyy-MM-dd");
   const isToday = differenceInCalendarDays(day, startOfToday()) === 0;
 
-  const dayTasks = useMemo(
-    () =>
-      tasks
-        .filter((t) => t.scheduled_at && dayKey(t.scheduled_at) === dayStr)
-        .sort((a, b) => minutesOf(a.scheduled_at!) - minutesOf(b.scheduled_at!)),
-    [tasks, dayStr]
-  );
+  const dayTasks = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return tasks
+      .filter((t) => {
+        if (!t.scheduled_at || dayKey(t.scheduled_at) !== dayStr) return false;
+        if (!q) return true;
+        return (
+          t.title.toLowerCase().includes(q) ||
+          t.tags.some((tag) => tag.name.toLowerCase().includes(q))
+        );
+      })
+      .sort((a, b) => minutesOf(a.scheduled_at!) - minutesOf(b.scheduled_at!));
+  }, [tasks, dayStr, query]);
 
   // 自动滚到当前时间附近
   useEffect(() => {

@@ -142,15 +142,15 @@ export function TaskItem({
             style={{ backgroundColor: priority.color }}
           />
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button
               type="button"
               {...attributes}
               {...listeners}
               aria-label="拖动排序"
-              className="-ml-1 hidden size-6 shrink-0 cursor-grab touch-none place-items-center rounded text-text-tertiary hover:bg-bg-hover active:cursor-grabbing group-hover:grid"
+              className="-ml-1 flex size-5 shrink-0 cursor-grab touch-none items-center justify-center rounded text-text-tertiary/40 opacity-0 transition-opacity duration-150 hover:bg-bg-hover hover:text-text-primary active:cursor-grabbing group-hover:opacity-100"
             >
-              <GripVertical className="size-4" />
+              <GripVertical className="size-3.5" />
             </button>
 
             {expandable ? (

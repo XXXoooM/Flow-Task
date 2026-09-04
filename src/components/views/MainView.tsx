@@ -198,7 +198,7 @@ export function MainView() {
 
   const renderTaskBody = () => {
     if (taskMode === "schedule") {
-      return <TimelineView tasks={tasks} />;
+      return <TimelineView tasks={tasks} query={query} />;
     }
     // 今日视图：只剩已完成 → 庆祝 + 引导下一步
     if (
@@ -294,45 +294,60 @@ export function MainView() {
 
         <div className="flex items-center gap-2">
           {isTaskView(activeView) && (
-            <div className="flex items-center rounded-lg bg-bg-elevated p-0.5 text-xs">
+            <div className="relative flex items-center rounded-lg bg-bg-elevated p-0.5 text-xs">
               <button
                 type="button"
                 onClick={() => setTaskMode("progress")}
                 className={cn(
-                  "flex items-center gap-1 rounded-md px-2 py-1 transition-colors",
+                  "relative z-10 flex items-center gap-1 rounded-md px-2.5 py-1 font-medium transition-colors",
                   taskMode === "progress"
-                    ? "bg-bg-surface text-text-primary shadow-sm"
+                    ? "text-text-primary"
                     : "text-text-tertiary hover:text-text-secondary"
                 )}
               >
-                ⚡ 进度
+                {taskMode === "progress" && (
+                  <motion.span
+                    layoutId="mode-tab-active"
+                    className="absolute inset-0 rounded-md bg-bg-surface shadow-xs"
+                    transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                  />
+                )}
+                <span className="relative z-10">⚡ 进度</span>
               </button>
               <button
                 type="button"
                 onClick={() => setTaskMode("schedule")}
                 className={cn(
-                  "flex items-center gap-1 rounded-md px-2 py-1 transition-colors",
+                  "relative z-10 flex items-center gap-1 rounded-md px-2.5 py-1 font-medium transition-colors",
                   taskMode === "schedule"
-                    ? "bg-bg-surface text-text-primary shadow-sm"
+                    ? "text-text-primary"
                     : "text-text-tertiary hover:text-text-secondary"
                 )}
               >
-                📅 日程
+                {taskMode === "schedule" && (
+                  <motion.span
+                    layoutId="mode-tab-active"
+                    className="absolute inset-0 rounded-md bg-bg-surface shadow-xs"
+                    transition={{ type: "spring", stiffness: 450, damping: 32 }}
+                  />
+                )}
+                <span className="relative z-10">📅 日程</span>
               </button>
             </div>
           )}
-          {isTaskView(activeView) && taskMode === "progress" && (
+
+          {isTaskView(activeView) && (
             <>
               <div className="relative flex items-center">
                 <Search className="pointer-events-none absolute left-2.5 size-4 text-text-tertiary" />
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="搜索任务…"
-                  className="h-8 w-44 pl-8 text-sm"
+                  placeholder={taskMode === "schedule" ? "搜索日程…" : "搜索任务…"}
+                  className="h-8 w-44 pl-8 text-sm transition-all"
                 />
               </div>
-              {hasActions && (
+              {taskMode === "progress" && hasActions && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button size="sm" variant="ghost" className="size-8 p-0">
