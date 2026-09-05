@@ -1,6 +1,6 @@
 [package]
 name = "flowtask"
-version = "1.0.0"
+version = "1.0.2"
 description = "FlowTask — 本地优先的个人任务管理桌面应用"
 authors = ["FlowTask"]
 edition = "2021"
