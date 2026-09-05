@@ -35,6 +35,7 @@ interface FocusState {
   phase: Phase;
   running: boolean;
   remaining: number;
+  targetEndMs: number | null;
   cycles: number;
   workStartMs: number;
 
@@ -89,12 +90,39 @@ export const useFocusStore = create<FocusState>()(
       phase: "work",
       running: false,
       remaining: 25 * 60,
+      targetEndMs: null,
       cycles: 0,
       workStartMs: Date.now(),
 
-      startTimer: () => set({ running: true }),
-      pauseTimer: () => set({ running: false }),
-      toggleTimer: () => set((s) => ({ running: !s.running })),
+      startTimer: () => {
+        const s = get();
+        if (s.running) return;
+        set({
+          running: true,
+          targetEndMs: Date.now() + s.remaining * 1000,
+        });
+      },
+      pauseTimer: () => {
+        const s = get();
+        if (!s.running) return;
+        const now = Date.now();
+        const currentRemaining = s.targetEndMs
+          ? Math.max(0, Math.round((s.targetEndMs - now) / 1000))
+          : s.remaining;
+        set({
+          running: false,
+          remaining: currentRemaining,
+          targetEndMs: null,
+        });
+      },
+      toggleTimer: () => {
+        const s = get();
+        if (s.running) {
+          s.pauseTimer();
+        } else {
+          s.startTimer();
+        }
+      },
       resetTimer: () => {
         const s = get();
         const workS = Math.max(1, s.settings.workMin) * 60;
@@ -102,6 +130,7 @@ export const useFocusStore = create<FocusState>()(
           running: false,
           phase: "work",
           remaining: workS,
+          targetEndMs: null,
           workStartMs: Date.now(),
         });
       },
@@ -109,20 +138,34 @@ export const useFocusStore = create<FocusState>()(
         const s = get();
         if (s.phase === "work") {
           const breakS = Math.max(1, s.settings.breakMin) * 60;
-          set({ phase: "break", remaining: breakS });
+          set({
+            phase: "break",
+            remaining: breakS,
+            targetEndMs: s.running ? Date.now() + breakS * 1000 : null,
+          });
         } else {
           const workS = Math.max(1, s.settings.workMin) * 60;
-          set({ phase: "work", remaining: workS, workStartMs: Date.now() });
+          set({
+            phase: "work",
+            remaining: workS,
+            targetEndMs: s.running ? Date.now() + workS * 1000 : null,
+            workStartMs: Date.now(),
+          });
         }
       },
       tickSecond: () => {
         const s = get();
         if (!s.running) return;
-        if (s.remaining > 1) {
-          set({ remaining: s.remaining - 1 });
+        const now = Date.now();
+        // 基于真实目标时刻校准剩余秒数（防系统休眠/锁屏节流漂移）
+        const realRemaining = s.targetEndMs
+          ? Math.max(0, Math.round((s.targetEndMs - now) / 1000))
+          : s.remaining - 1;
+
+        if (realRemaining > 0) {
+          set({ remaining: realRemaining });
         } else {
           // 阶段结束
-          const now = Date.now();
           const workS = Math.max(1, s.settings.workMin) * 60;
           const breakS = Math.max(1, s.settings.breakMin) * 60;
 
@@ -140,11 +183,13 @@ export const useFocusStore = create<FocusState>()(
             toast.success("🍅 番茄完成", {
               description: `专注了 ${s.settings.workMin} 分钟，休息 ${s.settings.breakMin} 分钟吧`,
             });
+            const nextRunning = s.settings.autoStartBreaks;
             set({
               phase: "break",
               remaining: breakS,
+              targetEndMs: nextRunning ? now + breakS * 1000 : null,
               cycles: s.cycles + 1,
-              running: s.settings.autoStartBreaks,
+              running: nextRunning,
             });
           } else {
             if (s.settings.sound) {
@@ -154,6 +199,7 @@ export const useFocusStore = create<FocusState>()(
             set({
               phase: "work",
               remaining: workS,
+              targetEndMs: now + workS * 1000,
               workStartMs: now,
               running: true,
             });

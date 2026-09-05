@@ -37,4 +37,49 @@ export default defineConfig(async () => ({
       ignored: ["**/src-tauri/**"],
     },
   },
+
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (
+              id.includes("react-dom") ||
+              id.includes("/react/") ||
+              id.includes("zustand")
+            ) {
+              return "vendor-react";
+            }
+            if (id.includes("@radix-ui") || id.includes("radix-ui") || id.includes("cmdk")) {
+              return "vendor-ui";
+            }
+            if (id.includes("@fullcalendar")) {
+              return "vendor-calendar";
+            }
+            if (id.includes("framer-motion")) {
+              return "vendor-motion";
+            }
+            if (id.includes("@dnd-kit")) {
+              return "vendor-dnd";
+            }
+            if (
+              id.includes("react-markdown") ||
+              id.includes("remark-gfm") ||
+              id.includes("rehype-highlight") ||
+              id.includes("highlight.js")
+            ) {
+              return "vendor-markdown";
+            }
+            if (id.includes("date-fns") || id.includes("react-day-picker")) {
+              return "vendor-date";
+            }
+            if (id.includes("lucide-react")) {
+              return "vendor-icons";
+            }
+          }
+        },
+      },
+    },
+  },
 }));

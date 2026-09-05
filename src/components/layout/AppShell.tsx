@@ -13,6 +13,8 @@ import { CommandPalette } from "@/components/layout/CommandPalette";
 import { ShortcutHelp } from "@/components/layout/ShortcutHelp";
 import { ensureNotifyPermission } from "@/lib/notify";
 import { useHistoryStore } from "@/stores/historyStore";
+import { useTaskStore } from "@/stores/taskStore";
+import { useTagStore } from "@/stores/tagStore";
 import { useUiStore } from "@/stores/uiStore";
 
 function isTyping(el: EventTarget | null): boolean {
@@ -40,6 +42,16 @@ export function AppShell() {
       unlisten = fn;
     });
     return () => unlisten?.();
+  }, []);
+
+  // 监听快照恢复（Undo / Redo 触发），重新刷新任务与标签
+  useEffect(() => {
+    const onRefresh = () => {
+      void useTaskStore.getState().fetchTasks();
+      void useTagStore.getState().loadTags();
+    };
+    window.addEventListener("flowtask:refresh-all", onRefresh);
+    return () => window.removeEventListener("flowtask:refresh-all", onRefresh);
   }, []);
 
   // Undo / Redo

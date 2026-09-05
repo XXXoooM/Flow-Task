@@ -73,8 +73,23 @@ function newDefaults(): FormState {
   };
 }
 
-function fromTask(task: Task | null, defaultDue?: string | null): FormState {
-  if (!task) return { ...newDefaults(), due_date: defaultDue ?? null };
+function fromTask(
+  task: Task | null,
+  defaultDue?: string | null,
+  defaultScheduledAt?: string | null
+): FormState {
+  const notifDefaultOffset = useNotifStore.getState().defaultOffset;
+  if (!task) {
+    const isSchedule = !!defaultScheduledAt;
+    return {
+      ...newDefaults(),
+      due_date: defaultDue ?? null,
+      scheduleOn: isSchedule,
+      scheduledAt: defaultScheduledAt ?? "",
+      reminderOn: isSchedule,
+      offset: notifDefaultOffset,
+    };
+  }
   return {
     title: task.title,
     note_md: task.note_md,
@@ -85,7 +100,7 @@ function fromTask(task: Task | null, defaultDue?: string | null): FormState {
     scheduleOn: isScheduleMode(task),
     scheduledAt: task.scheduled_at ?? "",
     reminderOn: task.reminder_enabled === 1,
-    offset: task.reminder_offset ?? 900,
+    offset: task.reminder_offset ?? notifDefaultOffset,
   };
 }
 
@@ -94,23 +109,27 @@ export function TaskForm({
   onOpenChange,
   task,
   defaultDue,
+  defaultScheduledAt,
   onSubmit,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   task: Task | null;
   defaultDue?: string | null;
+  defaultScheduledAt?: string | null;
   onSubmit: (id: string | null, input: TaskInput) => Promise<void> | void;
 }) {
-  const [form, setForm] = useState<FormState>(() => fromTask(task, defaultDue));
+  const [form, setForm] = useState<FormState>(() =>
+    fromTask(task, defaultDue, defaultScheduledAt)
+  );
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (open) {
-      setForm(fromTask(task, defaultDue));
+      setForm(fromTask(task, defaultDue, defaultScheduledAt));
       setError(null);
     }
-  }, [open, task, defaultDue]);
+  }, [open, task, defaultDue, defaultScheduledAt]);
 
   const patch = (p: Partial<FormState>) => setForm((s) => ({ ...s, ...p }));
 

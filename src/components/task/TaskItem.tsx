@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { toast } from "sonner";
-import { format, parseISO } from "date-fns";
+import { format, parseISO, addDays } from "date-fns";
 import {
   GripVertical,
   Pencil,
@@ -385,6 +385,66 @@ export function TaskItem({
                 </ContextMenuRadioItem>
               ))}
             </ContextMenuRadioGroup>
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+        <ContextMenuSub>
+          <ContextMenuSubTrigger>
+            <CalendarClock className="size-4" /> 设为日程
+          </ContextMenuSubTrigger>
+          <ContextMenuSubContent className="w-44">
+            <ContextMenuItem
+              onSelect={() => {
+                const todayStr = format(new Date(), "yyyy-MM-dd");
+                void patchTask(task.id, {
+                  scheduled_at: `${todayStr}T09:00`,
+                  reminder_enabled: 1,
+                });
+                toast.success("已设为今天 09:00 日程");
+              }}
+            >
+              今天上午 09:00
+            </ContextMenuItem>
+            <ContextMenuItem
+              onSelect={() => {
+                const todayStr = format(new Date(), "yyyy-MM-dd");
+                void patchTask(task.id, {
+                  scheduled_at: `${todayStr}T14:00`,
+                  reminder_enabled: 1,
+                });
+                toast.success("已设为今天 14:00 日程");
+              }}
+            >
+              今天下午 14:00
+            </ContextMenuItem>
+            <ContextMenuItem
+              onSelect={() => {
+                const tomorrowStr = format(addDays(new Date(), 1), "yyyy-MM-dd");
+                void patchTask(task.id, {
+                  scheduled_at: `${tomorrowStr}T09:00`,
+                  reminder_enabled: 1,
+                });
+                toast.success("已设为明天 09:00 日程");
+              }}
+            >
+              明天上午 09:00
+            </ContextMenuItem>
+            {task.scheduled_at && (
+              <>
+                <ContextMenuSeparator />
+                <ContextMenuItem
+                  variant="destructive"
+                  onSelect={() => {
+                    void patchTask(task.id, {
+                      scheduled_at: null,
+                      reminder_enabled: 0,
+                    });
+                    toast("已取消日程设置");
+                  }}
+                >
+                  清除日程
+                </ContextMenuItem>
+              </>
+            )}
           </ContextMenuSubContent>
         </ContextMenuSub>
         <ContextMenuSeparator />

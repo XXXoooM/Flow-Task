@@ -111,17 +111,35 @@ function EventNode({
   );
 }
 
-function Slot({ index }: { index: number }) {
+function Slot({
+  index,
+  dayStr,
+  onAddSchedule,
+}: {
+  index: number;
+  dayStr: string;
+  onAddSchedule: (time: string) => void;
+}) {
   const { setNodeRef, isOver } = useDroppable({ id: `s${index}` });
+  const hh = String(Math.floor(index / 2)).padStart(2, "0");
+  const mm = index % 2 === 0 ? "00" : "30";
+  const slotTime = `${dayStr}T${hh}:${mm}`;
+
   return (
     <div
       ref={setNodeRef}
       style={{ top: index * (HOUR_H / 2), height: HOUR_H / 2, left: 56, right: 0 }}
+      onClick={() => onAddSchedule(slotTime)}
+      title={`点击安排日程：${hh}:${mm}`}
       className={cn(
-        "absolute rounded transition-colors",
+        "group absolute cursor-pointer rounded transition-colors hover:bg-primary/10",
         isOver && "bg-primary/15 ring-2 ring-primary/40"
       )}
-    />
+    >
+      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-primary opacity-0 transition-opacity group-hover:opacity-80">
+        + {hh}:{mm}
+      </span>
+    </div>
   );
 }
 
@@ -247,7 +265,18 @@ export function TimelineView({
 
               {/* 半小时放置槽 */}
               {Array.from({ length: 48 }).map((_, i) => (
-                <Slot key={i} index={i} />
+                <Slot
+                  key={i}
+                  index={i}
+                  dayStr={dayStr}
+                  onAddSchedule={(time) => {
+                    window.dispatchEvent(
+                      new CustomEvent("flowtask:new", {
+                        detail: { scheduledAt: time },
+                      })
+                    );
+                  }}
+                />
               ))}
 
               {/* 现在线 */}

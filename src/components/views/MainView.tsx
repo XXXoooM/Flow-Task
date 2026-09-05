@@ -79,6 +79,7 @@ export function MainView() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Task | null>(null);
   const [newDue, setNewDue] = useState<string | null>(null);
+  const [newScheduledAt, setNewScheduledAt] = useState<string | null>(null);
   const [detailId, setDetailId] = useState<string | null>(null);
 
   const detailTask = useMemo(
@@ -111,6 +112,7 @@ export function MainView() {
       if (t) {
         setEditing(t);
         setNewDue(null);
+        setNewScheduledAt(null);
         setFormOpen(true);
       }
     };
@@ -118,21 +120,36 @@ export function MainView() {
     return () => window.removeEventListener("flowtask:edit", handler);
   }, [tasks]);
 
-  // 新建事件（CalendarView 点击某天触发），带预填日期
+  // 新建事件（CalendarView / TimelineView 触发），支持预填日期或日程时间
   useEffect(() => {
     const handler = (e: Event) => {
-      const due = (e as CustomEvent<string>).detail ?? null;
+      const detail = (e as CustomEvent<string | { due?: string; scheduledAt?: string } | null>).detail;
       setEditing(null);
-      setNewDue(due);
+      if (typeof detail === "string") {
+        if (detail.includes("T")) {
+          setNewScheduledAt(detail);
+          setNewDue(detail.slice(0, 10));
+        } else {
+          setNewDue(detail);
+          setNewScheduledAt(null);
+        }
+      } else if (detail && typeof detail === "object") {
+        setNewDue(detail.due ?? (detail.scheduledAt ? detail.scheduledAt.slice(0, 10) : null));
+        setNewScheduledAt(detail.scheduledAt ?? null);
+      } else {
+        setNewDue(null);
+        setNewScheduledAt(null);
+      }
       setFormOpen(true);
     };
     window.addEventListener("flowtask:new", handler);
     return () => window.removeEventListener("flowtask:new", handler);
   }, []);
 
-  function openNew(due?: string | null) {
+  function openNew(due?: string | null, scheduledAt?: string | null) {
     setEditing(null);
     setNewDue(due ?? null);
+    setNewScheduledAt(scheduledAt ?? null);
     setFormOpen(true);
   }
 
@@ -416,6 +433,7 @@ export function MainView() {
         onOpenChange={setFormOpen}
         task={editing}
         defaultDue={newDue}
+        defaultScheduledAt={newScheduledAt}
         onSubmit={handleSubmit}
       />
 

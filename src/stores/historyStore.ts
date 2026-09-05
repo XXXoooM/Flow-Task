@@ -25,13 +25,8 @@ interface HistoryState {
 const MAX = 50;
 
 async function refresh() {
-  // 动态导入避免与 taskStore/tagStore 的循环依赖。
-  const [{ useTaskStore }, { useTagStore }] = await Promise.all([
-    import("@/stores/taskStore"),
-    import("@/stores/tagStore"),
-  ]);
-  await useTaskStore.getState().fetchTasks();
-  await useTagStore.getState().loadTags();
+  // 触发全局事件通知各 Store 重新从 SQLite 加载数据，彻底避免循环与交叉动态导入
+  window.dispatchEvent(new CustomEvent("flowtask:refresh-all"));
 }
 
 export const useHistoryStore = create<HistoryState>((set, get) => ({
