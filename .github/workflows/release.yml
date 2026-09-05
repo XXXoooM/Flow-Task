@@ -17,11 +17,14 @@ jobs:
       matrix:
         include:
           - platform: 'macos-latest'      # Apple Silicon + Intel（universal）
-            target: 'universal-apple-darwin'
+            rust_targets: 'aarch64-apple-darwin x86_64-apple-darwin'
+            tauri_args: '--target universal-apple-darwin'
           - platform: 'windows-latest'    # .msi + NSIS .exe
-            target: 'x86_64-pc-windows-msvc'
+            rust_targets: 'x86_64-pc-windows-msvc'
+            tauri_args: ''
           - platform: 'ubuntu-22.04'      # .AppImage + .deb
-            target: 'x86_64-unknown-linux-gnu'
+            rust_targets: 'x86_64-unknown-linux-gnu'
+            tauri_args: ''
     name: 构建 ${{ matrix.platform }}
     runs-on: ${{ matrix.platform }}
     steps:
@@ -36,11 +39,7 @@ jobs:
       - name: 准备 Rust 工具链 + 缓存
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.platform == 'macos-latest' && '' || matrix.target }}
-
-      - name: 安装跨平台编译工具（macOS universal）
-        if: matrix.platform == 'macos-latest'
-        run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
+          targets: ${{ matrix.rust_targets }}
 
       - name: Rust 缓存
         uses: swatinem/rust-cache@v2
@@ -67,4 +66,4 @@ jobs:
           releaseBody: '见 CHANGELOG.md。下载对应平台的安装包安装即可。'
           releaseDraft: true
           prerelease: false
-          args: ${{ matrix.platform == 'macos-latest' && '--target universal-apple-darwin' || '' }}
+          args: ${{ matrix.tauri_args }}
